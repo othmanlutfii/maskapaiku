@@ -332,14 +332,17 @@
 
       // Draw the chart and set the chart values
       function drawChart() {
+        var dashboardPie = JSON.parse('{{ dashboardPie|safe }}');
+
+
+
+
         var data = google.visualization.arrayToDataTable([
-          {% for key, value in dashboardPie.items() %}
-      {% if value is string %}
-      ['{{ key }}', '{{ value }}'],
-        {% else %}
-      ['{{ key }}', {{ value }}],
-        {% endif %}
-      {% endfor %}
+
+        ['Sentiment', 'Jumlah'],
+        ['Negative',  dashboardPie['Negative']],
+          ['Netral', dashboardPie['Netral']],
+          ['Positive',    dashboardPie['Positive']]
     ]);
 
       // Optional; add a title and set the width and height of the chart

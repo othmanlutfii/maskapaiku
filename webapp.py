@@ -12,8 +12,10 @@ import base64
 from PIL import Image
 from io import BytesIO
 import os
-os.chdir(r'C:\Users\othma\PycharmProjects\UAS NLPp (2)\UAS NLPp')
+# os.chdir(r'C:\Users\othma\PycharmProjects\UAS NLPp (2)\UAS NLPp')
 import flask
+
+import json
 
 app = Flask(__name__)
 
@@ -199,17 +201,14 @@ def wordcloud(df, sentimen, maskapai, title):
                 interpolation="bilinear")
         plt.title(title)
         plt.axis('off')
-        plt.savefig(f'./static/output_files/{sentimen}{maskapai}.jpg')
+        plt.savefig(f'static/output_files/{sentimen}{maskapai}.jpg')
     except:
         pass
     
 def lda_predict(df, sentimen, maskapai):
-    from gensim.models.coherencemodel import CoherenceModel
     from gensim.models.ldamodel import LdaModel
-    from gensim.corpora.dictionary import Dictionary
     from gensim import  models
-    from wordcloud import WordCloud
-       
+
         
     text = df.cleaned
     text_list =  [i.split() for i in text]
@@ -221,7 +220,7 @@ def lda_predict(df, sentimen, maskapai):
 
 
     doc_term_matrix = [dictionary.doc2bow(doc) for doc in text_list]
-   
+
     tfidf = models.TfidfModel(doc_term_matrix) #build TF-IDF model
     corpus_tfidf = tfidf[doc_term_matrix]
     
@@ -272,12 +271,13 @@ def garuda():
     df = scraping("garuda indonesia")
     df = load_model_predict(cleaning(df))
     df['no'] = np.arange(len(df))
-    x = df[df['Sentiment'] == 'positif'].value_counts()
-    positif = sum(x)
-    y = df[df['Sentiment'] == 'negatif'].value_counts()
-    negatif = sum(y)
-    z = df[df['Sentiment'] == 'netral'].value_counts()
-    netral = sum(z)
+    x = df[df['Sentiment'] == 'positif']
+    positif = x.shape[0]
+    y = df[df['Sentiment'] == 'negatif']
+    negatif = y.shape[0]
+    z = df[df['Sentiment'] == 'netral']
+    netral = z.shape[0]
+
     Items = [(a, b, c) for a, b, c in zip(df['no'], df['Tweet'], df['Sentiment'])]
     import os, shutil
     folder = './static/output_files'
@@ -300,6 +300,8 @@ def garuda():
     lda_predict(df,'positif', 'garuda')
 
     data = {'Sentiment': 'Count', 'Positive': positif, 'Negative': negatif, 'Netral': netral}
+    data = json.dumps(data)
+
     return render_template('garuda.html',items=Items,dashboardPie=data)
 
 @app.route('/sriwijaya')
@@ -307,12 +309,12 @@ def sriwijaya():
     df = scraping("Sriwijaya Air")
     df = load_model_predict(cleaning(df))
     df['no'] = np.arange(len(df))
-    x = df[df['Sentiment'] == 'positif'].value_counts()
-    positif = sum(x)
-    y = df[df['Sentiment'] == 'negatif'].value_counts()
-    negatif = sum(y)
-    z = df[df['Sentiment'] == 'netral'].value_counts()
-    netral = sum(z)
+    x = df[df['Sentiment'] == 'positif']
+    positif = x.shape[0]
+    y = df[df['Sentiment'] == 'negatif']
+    negatif = y.shape[0]
+    z = df[df['Sentiment'] == 'netral']
+    netral = z.shape[0]
     Items = [(a, b, c) for a, b, c in zip(df['no'], df['Tweet'], df['Sentiment'])]
     import os, shutil
     folder = './static/output_files'
@@ -332,6 +334,10 @@ def sriwijaya():
     lda_predict(df,'positif', 'sriwijaya')
 
     data = {'Sentiment': 'Count', 'Positive': positif, 'Negative': negatif, 'Netral': netral}
+    data = json.dumps(data)
+
+
+
     return render_template('sriwijaya.html',items=Items,dashboardPie=data)
 
 @app.route('/lion')
@@ -339,14 +345,16 @@ def lion():
     df = scraping("Lion Air")
     df = load_model_predict(cleaning(df))
     df['no'] = np.arange(len(df))
-    x = df[df['Sentiment'] == 'positif'].value_counts()
-    positif = sum(x)
-    y = df[df['Sentiment'] == 'negatif'].value_counts()
-    negatif = sum(y)
-    z = df[df['Sentiment'] == 'netral'].value_counts()
-    netral = sum(z)
+    x = df[df['Sentiment'] == 'positif']
+    positif = x.shape[0]
+    y = df[df['Sentiment'] == 'negatif']
+    negatif = y.shape[0]
+    z = df[df['Sentiment'] == 'netral']
+    netral = z.shape[0]
     Items = [(a, b, c) for a, b, c in zip(df['no'], df['Tweet'], df['Sentiment'])]
     data = {'Sentiment': 'Count', 'Positive': positif, 'Negative': negatif, 'Netral': netral}
+    data = json.dumps(data)
+
     import os, shutil
     folder = './static/output_files'
     for filename in os.listdir(folder):
@@ -371,12 +379,15 @@ def citilink():
     df = scraping("Citilink")
     df = load_model_predict(cleaning(df))
     df['no'] = np.arange(len(df))
-    x = df[df['Sentiment'] == 'positif'].value_counts()
-    positif = sum(x)
-    y = df[df['Sentiment'] == 'negatif'].value_counts()
-    negatif = sum(y)
-    z = df[df['Sentiment'] == 'netral'].value_counts()
-    netral = sum(z)
+    x = df[df['Sentiment'] == 'positif']
+    positif = x.shape[0]
+    y = df[df['Sentiment'] == 'negatif']
+    negatif = y.shape[0]
+    z = df[df['Sentiment'] == 'netral']
+    netral = z.shape[0]
+    data = {'Sentiment': 'Count', 'Positive': positif, 'Negative': negatif, 'Netral': netral}
+    data = json.dumps(data)
+
     import os, shutil
     folder = './static/output_files'
     for filename in os.listdir(folder):
@@ -389,7 +400,9 @@ def citilink():
         except Exception as e:
             print('Failed to delete %s. Reason: %s' % (file_path, e))
     Items = [(a, b, c) for a, b, c in zip(df['no'], df['Tweet'], df['Sentiment'])]
-    data = {'Sentiment': 'Count', 'Positive': positif, 'Negative': negatif, 'Netral': netral}
+
+    
+
 
     lda_predict(df,'positif', 'citilink')
 
@@ -403,14 +416,16 @@ def batik():
     df = scraping("Batik Air")
     df = load_model_predict(cleaning(df))
     df['no'] = np.arange(len(df))
-    x = df[df['Sentiment'] == 'positif'].value_counts()
-    positif = sum(x)
-    y = df[df['Sentiment'] == 'negatif'].value_counts()
-    negatif = sum(y)
-    z = df[df['Sentiment'] == 'netral'].value_counts()
-    netral = sum(z)
+    x = df[df['Sentiment'] == 'positif']
+    positif = x.shape[0]
+    y = df[df['Sentiment'] == 'negatif']
+    negatif = y.shape[0]
+    z = df[df['Sentiment'] == 'netral']
+    netral = z.shape[0]
     Items = [(a, b, c) for a, b, c in zip(df['no'], df['Tweet'], df['Sentiment'])]
     data = {'Sentiment': 'Count', 'Positive': positif, 'Negative': negatif, 'Netral': netral}
+    data = json.dumps(data)
+
     import os, shutil
     folder = './static/output_files'
     for filename in os.listdir(folder):
